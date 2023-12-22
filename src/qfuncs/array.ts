@@ -173,7 +173,7 @@ class QArray extends QObject implements IQArray {
   uniqueNewArray<T=any> (arr: T[], isSimpleCompare?: boolean): T[] {
     if (isSimpleCompare)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return [...new Set<T>(arr)];
+      return Array.from(new Set<T>(arr));
 
     const newArr: T[] = [...arr];
     for (let i = 0; i < newArr.length; i++) {
