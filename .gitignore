@@ -1,0 +1,9 @@
+/dist
+/node_modules
+/directoryList.md
+/var
+yarn.lock
+/build
+package-lock.json
+/.idea
+.DS_Store

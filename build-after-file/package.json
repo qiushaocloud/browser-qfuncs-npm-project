@@ -1,0 +1,14 @@
+{
+  "name": "@qiushaocloud/browser-qfuncs",
+  "version": "1.0.10",
+  "description": "this is an npm package of qiushaocloud encapsulation of functional methods",
+  "author": "qiushaocloud",
+  "license": "MIT",
+  "main": "./src/main.js",
+  "types": "./src/main.d.ts",
+  "scripts": {
+    "inner-publish-npmjs": "npm publish --registry https://registry.npmjs.org/ --access=public --token=$NPM_QIUSHAOCLOUD_PUBLISH_TOKEN"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

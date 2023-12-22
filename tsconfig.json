@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "target": "ES2015",
+        "module": "CommonJS",
+        "sourceMap": false,
+        "lib": [ "dom", "es5", "es2015.promise" ,"es2015", "es2017"],
+        "allowJs": true,
+        "checkJs": true,
+        "declaration": true,
+        "outDir": "./dist/src",
+        "strict": true,
+        "noImplicitAny": true,
+        "moduleResolution": "classic",
+        "baseUrl": "./",
+        "paths": {
+            "@enum/*":["src/enum/*"],
+            "@common/*":["src/common/*"],
+            "@typings-interface/*":["src/typings-interface/*"],
+            "@src/*":["src/*"]
+        },
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    },
+    "include": [
+        "src/**/*",
+        "test/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
