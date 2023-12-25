@@ -163,6 +163,40 @@ class QCompare extends QToType implements IQCompare {
     return val1 === val2;
   }
 
+  isShoalEqual (val1: any, val2: any): boolean {
+    if (typeof val1 !== typeof val2) return false;
+    if (val1 === val2) return true;
+
+    if (Array.isArray(val1) && Array.isArray(val1)) {
+      if (val1.length !== val2.length) return false;
+      let isEqual = true;
+      for (let i = 0, len = val1.length; i < len; i++) {
+        if (val1[i] !== val2[i]) {
+          isEqual = false;
+          break;
+        }
+      }
+      return isEqual;
+    }
+
+    if (this.isJson(val1) && this.isJson(val1)) {
+      const val1Keys = Object.keys(val1);
+      const val2Keys = Object.keys(val2);
+      if (val1Keys.length !== val2Keys.length) return false;
+      if (val1Keys.sort().toString() !== val2Keys.sort().toString()) return false;
+      let isEqual = true;
+      for (const key in val1) {
+        if (val1[key] !== val2[key]) {
+          isEqual = false;
+          break;
+        }
+      }
+      return isEqual;
+    }
+
+    return false;
+  }
+
   private _getObjectOrArrLen (obj: any): number | -1 {
     if (Array.isArray(obj))
       return obj.length;

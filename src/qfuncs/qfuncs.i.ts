@@ -28,6 +28,8 @@ export interface IQCompare {
   isEqualObjectOrArray(obj1: any, obj2: any, isSimpleCompare?: boolean): boolean;
   isEqualJsonOrArrayByJsonStringify(obj1: any, obj2: any): boolean;
   isEqualAnyValue(val1: any, val2: any, isSimpleCompare?: boolean): boolean;
+  /** 浅比较是否相等，相等情况：val1 === val2 ｜ for(val1) === for(val2) */
+  isShoalEqual(val1: any, val2: any): boolean;
 }
 
 export interface IQDate {
