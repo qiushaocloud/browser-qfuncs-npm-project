@@ -121,12 +121,51 @@ class QArray extends QObject implements IQArray {
     return removeItemIndexs;
   }
 
-  findArrayItemsByConditions<T=any> (arr: T[], conditionsFn: (item:T) => boolean): {[itemIndex: number]: T} {
-    const findItems: {[itemIndex: number]: T} = {};
+  findArrayOneItemByConditions<T=any> (arr: T[], conditionsFn: (item:T) => boolean, isReverse?: boolean): T | undefined {
+    let findItem: T | undefined;
 
-    for (let i = 0, len = arr.length; i < len; i++) {
-      const isFind = conditionsFn(arr[i]);
-      isFind && (findItems[i] = arr[i]);
+    if (isReverse) {
+      for (let i = arr.length - 1; i >= 0; i--) {
+        const isFind = conditionsFn(arr[i]);
+        if (isFind) {
+          findItem = arr[i];
+          break;
+        }
+      }
+    } else {
+      for (let i = 0, len = arr.length; i < len; i++) {
+        const isFind = conditionsFn(arr[i]);
+        if (isFind) {
+          findItem = arr[i];
+          break;
+        }
+      }
+    }
+
+    return findItem;
+  }
+
+  findArrayItemsByConditions<T=any> (arr: T[], conditionsFn: (item:T) => boolean, count = 0): {[itemIndex: number]: T} {
+    const findItems: {[itemIndex: number]: T} = {};
+    let foundedCount = 0;
+    const absCount = Math.abs(count);
+
+    if (count < 0) {
+      for (let i = arr.length - 1; i >= 0; i--) {
+        const isFind = conditionsFn(arr[i]);
+        isFind && (findItems[i] = arr[i]);
+        foundedCount++;
+        if (absCount && foundedCount >= absCount)
+          break;
+      }
+    } else {
+      for (let i = 0, len = arr.length; i < len; i++) {
+        const isFind = conditionsFn(arr[i]);
+        isFind && (findItems[i] = arr[i]);
+        foundedCount++;
+        if (absCount && foundedCount >= absCount)
+          break;
+      }
     }
 
     return findItems;
