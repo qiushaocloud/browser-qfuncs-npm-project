@@ -43,7 +43,7 @@ export interface IQArray {
   isArrayIncludes<T=any> (arr: T[], searchElement: T, fromIndex?: number, isSimpleCompare?: boolean): boolean;
   arrayIndexOf<T=any> (arr: T[], searchElement: T, fromIndex?: number, isSimpleCompare?: boolean): number;
   removeArrayItem<T=any> (arr: T[], removeItem: T, count?: number, isSimpleCompare?: boolean): number[];
-  removeArrayItems<T=any> (arr: T[], removeItems: T[] | T, count?: number, isSimpleCompare?: boolean): number[];
+  removeArrayItems<T=any> (arr: T[], removeItems: T[], count?: number, isSimpleCompare?: boolean): number[];
   removeArrayItemsByIndexs<T=any> (arr: T[], removeIndexs: number[] | number): void;
   batchArrayPop<T=any> (arr: T[], count?: number): T[];
   batchArrayShift<T=any> (arr: T[], count?: number): T[];
@@ -64,7 +64,15 @@ export interface IQArray {
   uniqueArrayByRule<T=any> (arr: T[], rule?: number, isSimpleCompare?: boolean): number[];
   convertSet2Arr<T=any> (set: Set<T>): T[];
   /** 去重 arr2 相对 arr1 而言，多了哪些 items，少了哪些 items */
-  diffUniqueArrayItems (arr1: any[], arr2: any[], isSimpleCompare?: boolean): {more: any[], less: any[]};
+  diffUniqueArrayItems<T=any> (arr1: T[], arr2: T[], isSimpleCompare?: boolean): {more: T[], less: T[]};
+  /** 当 for(items) 不在数组中时 push 到数组中 */
+  pushArrayItemsNX<T=any> (arr: T[], items: T[], isSimpleCompare?: boolean): T[];
+  /** 当 item 不在数组中时 push 到数组中 */
+  pushArrayItemNX<T=any> (arr: T[], item: T, isSimpleCompare?: boolean): T | undefined;
+  /** 当 for(items) 不在数组中时 unshift 到数组中 */
+  unshiftArrayItemsNX<T=any> (arr: T[], items: T[], isSimpleCompare?: boolean): T[];
+  /** 当 item 不在数组中时 unshift 到数组中 */
+  unshiftArrayItemNX<T=any> (arr: T[], item: T, isSimpleCompare?: boolean): T | undefined;
 }
 
 export interface IQObject {

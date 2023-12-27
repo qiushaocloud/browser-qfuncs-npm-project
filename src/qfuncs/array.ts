@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import QObject from './object';
 import {IQArray} from './qfuncs.i';
@@ -54,10 +55,7 @@ class QArray extends QObject implements IQArray {
     return removeItemIndexs;
   }
 
-  removeArrayItems<T=any> (arr: T[], removeItems: T[] | T, count = 0, isSimpleCompare?: boolean): number[] {
-    if (!Array.isArray(removeItems))
-      return this.removeArrayItem(arr, removeItems, count, isSimpleCompare);
-
+  removeArrayItems<T=any> (arr: T[], removeItems: T[], count = 0, isSimpleCompare?: boolean): number[] {
     if (!removeItems.length)
       return [];
 
@@ -221,17 +219,17 @@ class QArray extends QObject implements IQArray {
     return Array.from(set);
   }
 
-  diffUniqueArrayItems (arr1: any[], arr2: any[], isSimpleCompare?: boolean): {more: any[], less: any[]} {
+  diffUniqueArrayItems<T=any> (arr1: T[], arr2: T[], isSimpleCompare?: boolean): {more: T[], less: T[]} {
     const uniqueArr1 = this.uniqueNewArray(arr1, isSimpleCompare);
     const uniqueArr2 = this.uniqueNewArray(arr2, isSimpleCompare);
 
-    const more: any[] = [];
-    const less: any[] = [];
+    const more: T[] = [];
+    const less: T[] = [];
 
     for (let i = uniqueArr1.length - 1; i >= 0; i--) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const item1 = uniqueArr1[i];
-      const item2Index = this.arrayIndexOf<any>(uniqueArr2, item1, undefined, isSimpleCompare);
+      const item2Index = this.arrayIndexOf<T>(uniqueArr2, item1, undefined, isSimpleCompare);
 
       if (item2Index !== -1) { // arr1 和 arr2 都有
         uniqueArr2.splice(item2Index, 1);
@@ -247,6 +245,37 @@ class QArray extends QObject implements IQArray {
     more.push(...uniqueArr2);
 
     return {more, less};
+  }
+
+  pushArrayItemsNX<T=any> (arr: T[], items: T[], isSimpleCompare?: boolean): T[] {
+    if (!items.length) return [];
+    const pushOkItems: T[] = [];
+    for (const item of items) {
+      if (this.isArrayIncludes(arr, item, undefined, isSimpleCompare)) continue;
+      arr.push(item);
+      pushOkItems.push(item);
+    }
+    return pushOkItems;
+  }
+
+  pushArrayItemNX<T=any> (arr: T[], item: T, isSimpleCompare?: boolean): T | undefined {
+    if (this.isArrayIncludes(arr, item, undefined, isSimpleCompare)) return;
+    arr.push(item);
+    return item;
+  }
+
+  unshiftArrayItemsNX<T=any> (arr: T[], items: T[], isSimpleCompare?: boolean): T[] {
+    if (!items.length) return [];
+    const unshiftOkItems: T[] = [...items];
+    this.removeArrayItems(unshiftOkItems, arr, undefined, isSimpleCompare);
+    arr.unshift(...unshiftOkItems);
+    return unshiftOkItems;
+  }
+
+  unshiftArrayItemNX<T=any> (arr: T[], item: T, isSimpleCompare?: boolean): T | undefined {
+    if (this.isArrayIncludes(arr, item, undefined, isSimpleCompare)) return;
+    arr.unshift(item);
+    return item;
   }
 
   private _findArrayItemIndexs<T=any> (
