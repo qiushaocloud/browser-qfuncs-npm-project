@@ -65,7 +65,7 @@ class QDate extends QCompare implements IQDate {
         } else if (typeof date === 'string') {
           const tsNum = Number(date);
           if (this.isNumber(tsNum))
-            date = new Date(date);
+            date = new Date(tsNum);
           else
             date = new Date(date);
         } else {
