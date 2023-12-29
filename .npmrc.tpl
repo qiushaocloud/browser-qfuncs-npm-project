@@ -1,3 +1,3 @@
-registry=https://registry.npmjs.org/
-//registry.npmjs.org/:always-auth=true
-//registry.npmjs.org/:_authToken=<CI_NPM_QIUSHAOCLOUD_PUBLISH_TOKEN>
+registry=https://<NPM_REGISTRY_HOST>/
+//<NPM_REGISTRY_HOST>/:always-auth=true
+//<NPM_REGISTRY_HOST>/:_authToken=<CI_NPM_QIUSHAOCLOUD_PUBLISH_TOKEN>
