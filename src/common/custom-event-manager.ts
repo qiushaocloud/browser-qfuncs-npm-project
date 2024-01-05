@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import {IFnAnyArgs} from '@typings-interface/fn.i';
-import {IJson} from '@typings-interface/object.i';
 
 /** 自定义事件类接口 */
 export interface ICustomEventManager{
-  on(eventType:string, listener: IFnAnyArgs, markid?: string | number): void;
-  off(eventType:string, listener?: IFnAnyArgs): void;
+  on(eventType:string, listener: IQFnAnyArgs, markid?: string | number): void;
+  off(eventType:string, listener?: IQFnAnyArgs): void;
   offAll(eventType: string): void;
   offByMarkId(eventType: string, markid: string | number): void;
   offAllByMarkId(markid: string | number): void;
@@ -24,8 +22,8 @@ export interface ICustomEventManager{
 * @date 2023-12-20
 */
 class CustomEventManager implements ICustomEventManager {
-  private _eventListeners:IJson = {}; // 事件列表
-  private _markListerners:IJson = {}; // 事件mark列表
+  private _eventListeners:IQJson = {}; // 事件列表
+  private _markListerners:IQJson = {}; // 事件mark列表
 
   /** 进行事件绑定
    * @method on
@@ -34,7 +32,7 @@ class CustomEventManager implements ICustomEventManager {
    * @param  {string|number} markid [可选]要绑定的事件标识id，用于根据标识id来移除事件
    * @returns {void} undefined
   */
-  on (eventType:string, listener: IFnAnyArgs, markid?: string | number): void {
+  on (eventType:string, listener: IQFnAnyArgs, markid?: string | number): void {
     if (!this._eventListeners[eventType])
       this._eventListeners[eventType] = [];
     this._eventListeners[eventType].push({listener, markid});
@@ -51,7 +49,7 @@ class CustomEventManager implements ICustomEventManager {
    * @param  {function} listener [可选]要移除的事件监听器，不传listener则会移除eventType下所有的监听器。
    * @returns {void} undefined
   */
-  off (eventType:string, listener?: IFnAnyArgs): void {
+  off (eventType:string, listener?: IQFnAnyArgs): void {
     const evtarr = this._eventListeners[eventType];
     if (evtarr && evtarr.length) {
       for (let index = evtarr.length - 1; index >= 0; index--) {

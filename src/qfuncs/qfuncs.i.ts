@@ -1,5 +1,3 @@
-import {IJson, IJsonT} from '@typings-interface/object.i';
-
 export interface IQCheckType {
   isNumber(num: any, isAllowNumStr?: boolean): boolean;
   isString(str: any): boolean;
@@ -77,13 +75,13 @@ export interface IQArray {
 }
 
 export interface IQObject {
-  deepAssign (sourceObj:IJson, destObj:IJson): IJson;
-  deepCopy (obj: IJson, isUseRecursive?: boolean): IJson;
-  hasObjKeys (obj: IJson, keys: string[] | string): boolean;
-  getObjVals (obj: IJson, keys: string[] | string): IJson;
-  getObjVal<T=any> (obj: IJsonT<T>,  key: string): T | undefined;
-  getObjValWhenEmptySetDef<T=any> (obj: IJsonT<T>, key: string, defaultVal: T): T;
-  delObjItems (obj: IJson, keys: string[] | string): IJson;
+  deepAssign (sourceObj:IQJson, destObj:IQJson): IQJson;
+  deepCopy (obj: IQJson, isUseRecursive?: boolean): IQJson;
+  hasObjKeys (obj: IQJson, keys: string[] | string): boolean;
+  getObjVals (obj: IQJson, keys: string[] | string): IQJson;
+  getObjVal<T=any> (obj: IQJsonT<T>,  key: string): T | undefined;
+  getObjValWhenEmptySetDef<T=any> (obj: IQJsonT<T>, key: string, defaultVal: T): T;
+  delObjItems (obj: IQJson, keys: string[] | string): IQJson;
 }
 
 export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQArray, IQObject {
@@ -94,7 +92,7 @@ export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQA
   generateUuid (): string;
   generateRandomNumberId (): number;
   generateRandomId (isUseNumAndDate?: boolean): string;
-  formatError (error: string | Error): IJson;
+  formatError (error: string | Error): IQJson;
 }
 
 declare global {

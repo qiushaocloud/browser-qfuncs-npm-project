@@ -1,6 +1,6 @@
 {
   "name": "@qiushaocloud/browser-qfuncs",
-  "version": "1.0.29",
+  "version": "1.1.0",
   "description": "this is an npm package of qiushaocloud encapsulation of functional methods",
   "author": "qiushaocloud",
   "license": "MIT",
@@ -20,6 +20,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@types/qtypings-browser-global": "latest",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
     "eslint": "^7.13.0",

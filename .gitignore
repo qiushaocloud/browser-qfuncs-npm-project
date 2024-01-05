@@ -3,6 +3,7 @@
 /directoryList.md
 /var
 yarn.lock
+yarn-error.log
 /build
 package-lock.json
 /.idea

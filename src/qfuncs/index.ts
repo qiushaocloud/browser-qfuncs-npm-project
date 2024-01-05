@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {IQMethods} from './qfuncs.i';
 import QArray from './array';
-import {IJson} from '@typings-interface/object.i';
 
 class QMethods extends QArray implements IQMethods {
   sleep (ts: number): Promise<void> {
@@ -62,11 +61,11 @@ class QMethods extends QArray implements IQMethods {
     return this.generateUuid().replace(/-/g, '');
   }
 
-  formatError (error: string | (Error & IJson)): IJson {
+  formatError (error: string | (Error & IQJson)): IQJson {
     try {
       if (typeof error === 'string') return {message: error};
 
-      const errResData: IJson = {};
+      const errResData: IQJson = {};
 
       error.name !== undefined && (errResData.name = error.name);
       error.message !== undefined && (errResData.message = error.message);
