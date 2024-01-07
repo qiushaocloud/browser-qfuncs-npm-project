@@ -1,6 +1,6 @@
 {
   "name": "@qiushaocloud/browser-qfuncs",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "this is an npm package of qiushaocloud encapsulation of functional methods",
   "author": "qiushaocloud",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "inner-publish-qiushaocloud-npmjs": "npm publish --registry https://npm.qiushaocloud.top:4873/ --access=public --token=$QIUSHAOCLOUD_SELF_NPMJS_PUBLISH_TOKEN"
   },
   "dependencies": {
-    "@types/qtypings-browser-global": "latest"
+    "@types/qtypings-browser-global": "git+https://gitee.com/qiushaocloud/npmjs-dts-types-projects.git#qtypings-browser-global"
   },
   "devDependencies": {}
 }
