@@ -20,7 +20,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/qtypings-browser-global": "latest",
+    "@types/qtypings-browser-global": "git+https://gitee.com/qiushaocloud/npmjs-dts-types-projects.git#qtypings-browser-global",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
     "eslint": "^7.13.0",
