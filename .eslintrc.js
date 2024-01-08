@@ -12,7 +12,7 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking'
     ],
-    "plugins": ['@typescript-eslint'],//定义了该eslint文件所依赖的插件
+    "plugins": ['@typescript-eslint', 'eslint-plugin-tsdoc'],//定义了该eslint文件所依赖的插件
     'parserOptions': {
         'project': 'tsconfig.json',
         'tsconfigRootDir': __dirname,
