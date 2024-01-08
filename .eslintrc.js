@@ -18,6 +18,16 @@ module.exports = {
         'tsconfigRootDir': __dirname,
         'ecmaVersion': 5
     },
+    'ignorePatterns': [
+        'node_modules/',
+        'dist/',
+        '.vscode/',
+        'build-after-file/',
+        'build-script-utils/',
+        'tsconfig.json',
+        '.eslintrc.js',
+        'sync-version.js'
+    ],
     'rules': {
         'indent': [  //强制使用一致的缩进：tab
             'error',
