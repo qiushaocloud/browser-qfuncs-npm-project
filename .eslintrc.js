@@ -12,12 +12,22 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking'
     ],
-    "plugins": ['@typescript-eslint'],//定义了该eslint文件所依赖的插件
+    "plugins": ['@typescript-eslint', 'eslint-plugin-tsdoc'],//定义了该eslint文件所依赖的插件
     'parserOptions': {
         'project': 'tsconfig.json',
         'tsconfigRootDir': __dirname,
         'ecmaVersion': 5
     },
+    'ignorePatterns': [
+        'node_modules/',
+        'dist/',
+        '.vscode/',
+        'build-after-file/',
+        'build-script-utils/',
+        'tsconfig.json',
+        '.eslintrc.js',
+        'sync-version.js'
+    ],
     'rules': {
         'indent': [  //强制使用一致的缩进：tab
             'error',
