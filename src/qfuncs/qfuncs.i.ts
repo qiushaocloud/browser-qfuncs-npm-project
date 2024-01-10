@@ -75,13 +75,13 @@ export interface IQArray {
 }
 
 export interface IQObject {
-  deepAssign (sourceObj:IQJson, destObj:IQJson): IQJson;
-  deepCopy (obj: IQJson, isUseRecursive?: boolean): IQJson;
-  hasObjKeys (obj: IQJson, keys: string[] | string): boolean;
-  getObjVals (obj: IQJson, keys: string[] | string): IQJson;
-  getObjVal<T=any> (obj: IQJsonT<T>,  key: string): T | undefined;
-  getObjValWhenEmptySetDef<T=any> (obj: IQJsonT<T>, key: string, defaultVal: T): T;
-  delObjItems (obj: IQJson, keys: string[] | string): IQJson;
+  deepAssign (sourceObj:QJson, destObj:QJson): QJson;
+  deepCopy (obj: QJson, isUseRecursive?: boolean): QJson;
+  hasObjKeys (obj: QJson, keys: string[] | string): boolean;
+  getObjVals (obj: QJson, keys: string[] | string): QJson;
+  getObjVal<T=any> (obj: QJsonT<T>,  key: string): T | undefined;
+  getObjValWhenEmptySetDef<T=any> (obj: QJsonT<T>, key: string, defaultVal: T): T;
+  delObjItems (obj: QJson, keys: string[] | string): QJson;
 }
 
 export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQArray, IQObject {
@@ -92,7 +92,7 @@ export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQA
   generateUuid (): string;
   generateRandomNumberId (): number;
   generateRandomId (isUseNumAndDate?: boolean): string;
-  formatError (error: string | Error): IQJson;
+  formatError (error: string | Error): QJson;
 }
 
 declare global {

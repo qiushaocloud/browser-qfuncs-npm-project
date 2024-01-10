@@ -61,11 +61,11 @@ class QMethods extends QArray implements IQMethods {
     return this.generateUuid().replace(/-/g, '');
   }
 
-  formatError (error: string | (Error & IQJson)): IQJson {
+  formatError (error: string | (Error & QJson)): QJson {
     try {
       if (typeof error === 'string') return {message: error};
 
-      const errResData: IQJson = {};
+      const errResData: QJson = {};
 
       error.name !== undefined && (errResData.name = error.name);
       error.message !== undefined && (errResData.message = error.message);

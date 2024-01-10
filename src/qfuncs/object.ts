@@ -5,8 +5,8 @@ import QDate from './date';
 import {IQObject} from './qfuncs.i';
 
 class QObject extends QDate implements IQObject {
-  deepAssign (sourceObj:IQJson, destObj:IQJson): IQJson {
-    const changeObj:IQJson = {};
+  deepAssign (sourceObj:QJson, destObj:QJson): QJson {
+    const changeObj:QJson = {};
 
     for (const key in destObj) {
       const sourceVal: unknown = sourceObj[key];
@@ -16,7 +16,7 @@ class QObject extends QDate implements IQObject {
         sourceObj[key] = destVal;
         changeObj[key] = destVal;
       } else if (typeof sourceVal === 'object' && typeof destVal === 'object') {
-        const changeObjTmp = this.deepAssign((sourceVal as IQJson), (destVal as IQJson));
+        const changeObjTmp = this.deepAssign((sourceVal as QJson), (destVal as QJson));
         if (Object.keys(changeObjTmp).length) {
           changeObj[key] = changeObjTmp;
         }
@@ -31,12 +31,12 @@ class QObject extends QDate implements IQObject {
     return changeObj;
   }
 
-  deepCopy (obj: IQJson, isUseRecursive?: boolean): IQJson {
+  deepCopy (obj: QJson, isUseRecursive?: boolean): QJson {
     if (!(Array.isArray(obj) || this.isPlainObject(obj)))
       return obj;
 
     if (isUseRecursive) {
-      const newObj: IQJson = Array.isArray(obj) ? [] : {};
+      const newObj: QJson = Array.isArray(obj) ? [] : {};
 
       for (const key in obj) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -51,10 +51,10 @@ class QObject extends QDate implements IQObject {
       return newObj;
     }
 
-    return (JSON.parse(JSON.stringify(obj)) as IQJson);
+    return (JSON.parse(JSON.stringify(obj)) as QJson);
   }
 
-  hasObjKeys (obj: IQJson, keys: string[] | string): boolean {
+  hasObjKeys (obj: QJson, keys: string[] | string): boolean {
     if (!obj.hasOwnProperty) return false;
 
     if (typeof keys === 'string') {
@@ -70,8 +70,8 @@ class QObject extends QDate implements IQObject {
     return false;
   }
 
-  getObjVals (obj: IQJson,  keys: string[] | string): IQJson {
-    const vals: IQJson = {};
+  getObjVals (obj: QJson,  keys: string[] | string): QJson {
+    const vals: QJson = {};
 
     if (typeof keys === 'string') {
       // eslint-disable-next-line no-prototype-builtins
@@ -92,11 +92,11 @@ class QObject extends QDate implements IQObject {
     return vals;
   }
 
-  getObjVal<T=any> (obj: IQJsonT<T>,  key: string): T | undefined {
+  getObjVal<T=any> (obj: QJsonT<T>,  key: string): T | undefined {
     return obj[key];
   }
 
-  getObjValWhenEmptySetDef<T=any> (obj: IQJsonT<T>, key: string, defaultVal: T): T {
+  getObjValWhenEmptySetDef<T=any> (obj: QJsonT<T>, key: string, defaultVal: T): T {
     let val = obj[key];
 
     if (val === undefined) {
@@ -107,8 +107,8 @@ class QObject extends QDate implements IQObject {
     return val;
   }
 
-  delObjItems (obj: IQJson, keys: string[] | string): IQJson {
-    const delObj: IQJson = {};
+  delObjItems (obj: QJson, keys: string[] | string): QJson {
+    const delObj: QJson = {};
     if (typeof keys === 'string') {
       // eslint-disable-next-line no-prototype-builtins
       if (obj.hasOwnProperty && obj.hasOwnProperty(keys)) {
