@@ -118,7 +118,15 @@
     delObjItems (obj: IJson, keys: string[] | string): IJson;
   }
 
-  export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQArray, IQObject {
+  export interface IQDom {
+    /** 阻止事件冒泡函数
+     * @param evtCallback 原事件回调函数
+     * @returns 返回阻止事件后的函数
+     */
+    stopPropagationWrapper(evtCallback: (event?: Event) => void): (event?: Event) => void;
+  }
+
+  export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQArray, IQObject, IQDom {
     /** 延迟执行,需要用 async 和 await 组合实现 */
     sleep (ts: number): Promise<void>;
     /** 随机获取范围内 count 个值 */

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {IQMethods} from './qfuncs.i';
-import QArray from './array';
+import QDom from './dom';
 
-class QMethods extends QArray implements IQMethods {
+class QMethods extends QDom implements IQMethods {
   sleep (ts: number): Promise<void> {
     return new Promise((resolve)=>{
       setTimeout(()=>{
