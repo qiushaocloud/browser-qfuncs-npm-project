@@ -127,6 +127,20 @@
     generateRandomNumberId (): number;
     generateRandomId (isUseNumAndDate?: boolean): string;
     formatError (error: string | Error): IJson;
+    /** 防抖函数
+     * @param func 原函数
+     * @param delay 延迟时间
+     * @param immediate 首次触发时是否立即执行
+     * @returns 返回防抖后的函数
+     */
+    debounce(func: QFnAnyArgs, delay: number, immediate?: boolean): QFnAnyArgs;
+
+    /** 节流函数
+     * @param func 原函数
+     * @param delay 延迟时间
+     * @returns 返回节流后的函数
+     */
+    throttle(func: QFnAnyArgs, delay: number): QFnAnyArgs;
   }
 
   declare global {
