@@ -3,7 +3,7 @@ import QArray from './array';
 import {IQDom} from './qfuncs.i';
 
 class QDom extends QArray implements IQDom {
-  stopPropagationWrapper (evtCallback: (event?: Event) => void): (event?: Event) => void {
+  stopPropagationWrapper (evtCallback: (event: Event) => void): (event: Event) => void {
     return function (event?: Event) {
       if (event && event instanceof Event) {
         // 阻止事件冒泡
@@ -22,7 +22,7 @@ class QDom extends QArray implements IQDom {
    * @param evtCallback 原事件回调函数
    * @returns 返回阻止事件后的函数
    */
-  stopImmediatePropagationWrapper (evtCallback: (event?: Event) => void): (event?: Event) => void {
+  stopImmediatePropagationWrapper (evtCallback: (event: Event) => void): (event: Event) => void {
     return function (event?: Event) {
       if (event && event instanceof Event) {
         // 阻止事件冒泡
