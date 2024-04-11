@@ -119,7 +119,7 @@
   }
 
   export interface IQDom {
-    /** 阻止事件冒泡函数
+    /** 封装阻止事件冒泡函数
      * @param evtCallback 原事件回调函数
      * @returns 返回阻止事件后的函数
      */
