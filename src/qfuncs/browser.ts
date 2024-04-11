@@ -87,29 +87,70 @@ class QBrowser extends QArray implements IQBrowser {
     if (!element || !eType || !listener)
       return;
 
+    let isSave = true;
     if (element.addEventListener) { // 如果支持addEventListener
       element.addEventListener(eType, listener, optionsOrUseCapture);
     } else if ((element as any).attachEvent) { // 如果支持attachEvent
       (element as any).attachEvent('on' + eType, listener);
     } else { // 否则使用兼容的onclick绑定
+      isSave = false;
       (element as any)['on' + eType] = listener;
+    }
+
+    if (isSave) {
+      let qtmpEventListeners = (element as any)._qtmpEventListeners as QJsonT<QFnAnyArgs[]>;
+      if (!qtmpEventListeners)  {
+        qtmpEventListeners = {};
+        (element as any)._qtmpEventListeners = qtmpEventListeners;
+      }
+
+      let eTypeListenerArr = qtmpEventListeners[eType];
+      if (!eTypeListenerArr) {
+        eTypeListenerArr = [];
+        qtmpEventListeners[eType] = eTypeListenerArr;
+      }
+
+      !eTypeListenerArr.includes(listener) && eTypeListenerArr.push(listener);
     }
   }
 
   /** 事件解绑
    * @param element 事件元素
    * @param eType 事件类型
-   * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的 listener
+   * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的 listener 【注：所有调用 addEvent 进行绑定类型的 listener 】
    * @param optionsOrUseCapture 参考浏览器 removeEventListener API 的 removeEventListener(type, listener, options) 和 removeEventListener(type, listener, useCapture)
    */
-  removeEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void {
+  removeEvent (element: HTMLElement | Window | Document, eType: string, listener?: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void {
     if (!element || !eType || !listener)
       return;
 
+    const eTypeListenerArr = ((element as any)._qtmpEventListeners && (element as any)._qtmpEventListeners[eType]) as QFnAnyArgs[];
     if (element.removeEventListener) {
-      element.removeEventListener(eType, listener, optionsOrUseCapture);
+      if (listener) {
+        element.removeEventListener(eType, listener, optionsOrUseCapture);
+        if (!eTypeListenerArr || !eTypeListenerArr.length) return;
+        const listenerIndex = eTypeListenerArr.indexOf(listener);
+        listenerIndex !== -1 && eTypeListenerArr.splice(listenerIndex, 1);
+      } else {
+        if (!eTypeListenerArr || !eTypeListenerArr.length) return;
+        delete (element as any)._qtmpEventListeners[eType];
+        for (const eTypeListener of eTypeListenerArr) {
+          element.removeEventListener(eType, eTypeListener, optionsOrUseCapture);
+        }
+      }
     } else if ((element as any).detachEvent) {
-      (element as any).detachEvent('on' + eType, listener);
+      if (listener) {
+        (element as any).detachEvent('on' + eType, listener);
+        if (!eTypeListenerArr || !eTypeListenerArr.length) return;
+        const listenerIndex = eTypeListenerArr.indexOf(listener);
+        listenerIndex !== -1 && eTypeListenerArr.splice(listenerIndex, 1);
+      } else {
+        if (!eTypeListenerArr || !eTypeListenerArr.length) return;
+        delete (element as any)._qtmpEventListeners[eType];
+        for (const eTypeListener of eTypeListenerArr) {
+          (element as any).detachEvent('on' + eType, eTypeListener);
+        }
+      }
     } else {
       (element as any)['on' + eType] = null;
     }
@@ -171,7 +212,8 @@ class QBrowser extends QArray implements IQBrowser {
     this.addEvent(document, 'MSFullscreenChange', listener); // Internet Explorer and Edge
   }
 
-  removeFullScreenChangeListener (listener: QFnEmptyArgs): void {
+  /** 移除全屏改变监听器，如果 listener 不传，则移除所有 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 的 listener 】 */
+  removeFullScreenChangeListener (listener?: QFnEmptyArgs): void {
     this.removeEvent(document, 'fullscreenchange', listener);
     this.removeEvent(document, 'mozfullscreenchange', listener); // Firefox
     this.removeEvent(document, 'webkitfullscreenchange', listener); // Chrome, Safari and Opera

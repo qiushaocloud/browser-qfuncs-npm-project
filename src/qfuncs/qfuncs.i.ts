@@ -112,17 +112,18 @@ export interface IQBrowser {
   /** 事件解绑
    * @param element 事件元素
    * @param eType 事件类型
-   * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的 listener
+   * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的 listener 【注：所有调用 addEvent 进行绑定类型的 listener 】
    * @param optionsOrUseCapture 参考浏览器 removeEventListener API 的 removeEventListener(type, listener, options) 和 removeEventListener(type, listener, useCapture)
    */
-  removeEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void;
+  removeEvent (element: HTMLElement | Window | Document, eType: string, listener?: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void;
 
   isSupportFullScreen (): boolean;
   getFullScreenElement (): HTMLElement | undefined;
   enterFullScreen (element?: HTMLElement): void;
   exitFullScreen (): void;
   addFullScreenChangeListener (listener: QFnEmptyArgs): void;
-  removeFullScreenChangeListener (listener: QFnEmptyArgs): void;
+  /** 移除全屏改变监听器，如果 listener 不传，则移除所有 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 的 listener 】 */
+  removeFullScreenChangeListener (listener?: QFnEmptyArgs): void;
 }
 
 export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQArray, IQObject, IQBrowser {
