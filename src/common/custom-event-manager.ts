@@ -4,6 +4,7 @@
 /** 自定义事件类接口 */
 export interface ICustomEventManager{
   on(eventType:string, listener: QFnAnyArgs, markid?: string | number): void;
+  once(eventType:string, listener: QFnAnyArgs, markid?: string | number): void;
   off(eventType:string, listener?: QFnAnyArgs): void;
   offAll(eventType: string): void;
   offByMarkId(eventType: string, markid: string | number): void;
@@ -22,8 +23,15 @@ export interface ICustomEventManager{
 * @date 2023-12-20
 */
 class CustomEventManager implements ICustomEventManager {
-  private _eventListeners:QJson = {}; // 事件列表
-  private _markListerners:QJson = {}; // 事件mark列表
+  private _eventListeners:QJsonT<Array<{
+    listener: QFnAnyArgs,
+    markid?: string | number,
+    isOnce?: boolean
+  }>> = {}; // 事件列表, {eventType: XXX}
+  private _markListerners:QJsonT<Array<{
+    eventType: string,
+    listener: QFnAnyArgs
+  }>> = {}; // 事件mark列表, {markid: XXX}
 
   /** 进行事件绑定
    * @method on
@@ -36,6 +44,24 @@ class CustomEventManager implements ICustomEventManager {
     if (!this._eventListeners[eventType])
       this._eventListeners[eventType] = [];
     this._eventListeners[eventType].push({listener, markid});
+    if (markid) {
+      if (!this._markListerners[markid])
+        this._markListerners[markid] = [];
+      this._markListerners[markid].push({eventType, listener});
+    }
+  }
+
+  /** 进行一次性事件绑定
+   * @method on
+   * @param  {string} eventType 要绑定的事件名称
+   * @param  {function} listener 要绑定的事件监听器
+   * @param  {string|number} markid [可选]要绑定的事件标识id，用于根据标识id来移除事件
+   * @returns {void} undefined
+  */
+  once (eventType:string, listener: QFnAnyArgs, markid?: string | number): void {
+    if (!this._eventListeners[eventType])
+      this._eventListeners[eventType] = [];
+    this._eventListeners[eventType].push({listener, markid, isOnce: true});
     if (markid) {
       if (!this._markListerners[markid])
         this._markListerners[markid] = [];
@@ -206,9 +232,14 @@ class CustomEventManager implements ICustomEventManager {
   trigger (eventType: string, ...args: any[]): void {
     const evtarr = this._eventListeners[eventType];
     if (evtarr) {
-      for (const evt of [...evtarr]) {
-        if (evt && evt.listener)
-          evt.listener(...args);
+      for (let i = 0, len = evtarr.length; i < len; i++) {
+        const evt = evtarr[i];
+        if (evt.isOnce) {
+          evtarr.splice(i, 1);
+          i--;
+          len--;
+        }
+        evt.listener && typeof evt.listener === 'function' && evt.listener(...args);
       }
     }
   }
