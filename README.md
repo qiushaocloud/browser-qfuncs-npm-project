@@ -29,6 +29,7 @@
     /** 自定义事件类接口 */
     export interface ICustomEventManager{
         on(eventType:string, listener: IFnAnyArgs, markid?: string | number): void;
+        once(eventType:string, listener: QFnAnyArgs, markid?: string | number): void;
         off(eventType:string, listener?: IFnAnyArgs): void;
         offAll(eventType: string): void;
         offByMarkId(eventType: string, markid: string | number): void;
