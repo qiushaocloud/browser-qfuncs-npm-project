@@ -106,13 +106,14 @@ export interface IQBrowser {
    * @param eType 事件类型
    * @param listener 事件处理器
    * @param optionsOrUseCapture 参考浏览器 addEventListener API 的 addEventListener(type, listener, options) 和 addEventListener(type, listener, useCapture)
+   * @param isCacheListener 是否缓存 listener，如果缓存了，则 removeEvent 时没传 listener 则会删除缓存的 listeners
   */
-  addEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void;
+  addEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean, isCacheListener?: boolean): void;
 
   /** 事件解绑
    * @param element 事件元素
    * @param eType 事件类型
-   * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的 listener 【注：所有调用 addEvent 进行绑定类型的 listener 】
+   * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的缓存 listener 【注：所有调用 addEvent 进行绑定类型的缓存 listener 】
    * @param optionsOrUseCapture 参考浏览器 removeEventListener API 的 removeEventListener(type, listener, options) 和 removeEventListener(type, listener, useCapture)
    */
   removeEvent (element: HTMLElement | Window | Document, eType: string, listener?: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void;
@@ -122,7 +123,7 @@ export interface IQBrowser {
   enterFullScreen (element?: HTMLElement): void;
   exitFullScreen (): void;
   addFullScreenChangeListener (listener: QFnEmptyArgs): void;
-  /** 移除全屏改变监听器，如果 listener 不传，则移除所有 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 的 listener 】 */
+  /** 移除全屏改变监听器，如果 listener 不传，则移除所有缓存 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 缓存的 listener 】 */
   removeFullScreenChangeListener (listener?: QFnEmptyArgs): void;
 }
 

@@ -82,12 +82,13 @@ class QBrowser extends QArray implements IQBrowser {
    * @param eType 事件类型
    * @param listener 事件处理器
    * @param optionsOrUseCapture 参考浏览器 addEventListener API 的 addEventListener(type, listener, options) 和 addEventListener(type, listener, useCapture)
+   * @param isCacheListener 是否缓存 listener，如果缓存了，则 removeEvent 时没传 listener 则会删除缓存的 listeners
   */
-  addEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void  {
+  addEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean, isCacheListener?: boolean): void  {
     if (!element || !eType || !listener)
       return;
 
-    let isSave = true;
+    let isSave = !!isCacheListener;
     if (element.addEventListener) { // 如果支持addEventListener
       element.addEventListener(eType, listener, optionsOrUseCapture);
     } else if ((element as any).attachEvent) { // 如果支持attachEvent
@@ -121,7 +122,7 @@ class QBrowser extends QArray implements IQBrowser {
    * @param optionsOrUseCapture 参考浏览器 removeEventListener API 的 removeEventListener(type, listener, options) 和 removeEventListener(type, listener, useCapture)
    */
   removeEvent (element: HTMLElement | Window | Document, eType: string, listener?: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void {
-    if (!element || !eType || !listener)
+    if (!element || !eType)
       return;
 
     const eTypeListenerArr = ((element as any)._qtmpEventListeners && (element as any)._qtmpEventListeners[eType]) as QFnAnyArgs[];
@@ -206,13 +207,13 @@ class QBrowser extends QArray implements IQBrowser {
   }
 
   addFullScreenChangeListener (listener: QFnEmptyArgs): void {
-    this.addEvent(document, 'fullscreenchange', listener);
-    this.addEvent(document, 'mozfullscreenchange', listener); // Firefox
-    this.addEvent(document, 'webkitfullscreenchange', listener); // Chrome, Safari and Opera
-    this.addEvent(document, 'MSFullscreenChange', listener); // Internet Explorer and Edge
+    this.addEvent(document, 'fullscreenchange', listener, undefined, true);
+    this.addEvent(document, 'mozfullscreenchange', listener, undefined, true); // Firefox
+    this.addEvent(document, 'webkitfullscreenchange', listener, undefined, true); // Chrome, Safari and Opera
+    this.addEvent(document, 'MSFullscreenChange', listener, undefined, true); // Internet Explorer and Edge
   }
 
-  /** 移除全屏改变监听器，如果 listener 不传，则移除所有 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 的 listener 】 */
+  /** 移除全屏改变监听器，如果 listener 不传，则移除所有缓存 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 缓存的 listener 】 */
   removeFullScreenChangeListener (listener?: QFnEmptyArgs): void {
     this.removeEvent(document, 'fullscreenchange', listener);
     this.removeEvent(document, 'mozfullscreenchange', listener); // Firefox
