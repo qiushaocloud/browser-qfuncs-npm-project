@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {IQMethods} from './qfuncs.i';
-import QDom from './dom';
+import QBrowser from './browser';
 
-class QMethods extends QDom implements IQMethods {
+class QMethods extends QBrowser implements IQMethods {
   sleep (ts: number): Promise<void> {
     return new Promise((resolve)=>{
       setTimeout(()=>{

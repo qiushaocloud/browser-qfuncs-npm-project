@@ -119,21 +119,48 @@
     delObjItems (obj: IJson, keys: string[] | string): IJson;
   }
 
-  export interface IQDom {
+  export interface IQBrowser {
     /** 封装阻止事件冒泡函数
      * @param evtCallback 原事件回调函数
      * @returns 返回阻止事件后的函数
-     */
+    */
     stopPropagationWrapper(evtCallback: (event: Event) => void): (event: Event) => void;
 
     /** 封装 stopImmediatePropagation(阻止监听同一事件的其他事件监听器被调用) 函数
      * @param evtCallback 原事件回调函数
      * @returns 返回阻止事件后的函数
-     */
+    */
     stopImmediatePropagationWrapper(evtCallback: (event: Event) => void): (event: Event) => void;
+
+    hasDomClass(element: HTMLElement, className: string | string[]): boolean;
+    addDomClass(element: HTMLElement, className: string | string[]): void;
+    removeDomClass(element: HTMLElement, className: string | string[]): void;
+
+    /** 绑定事件
+     * @param element 事件元素
+     * @param eType 事件类型
+     * @param listener 事件处理器
+     * @param optionsOrUseCapture 参考浏览器 addEventListener API 的 addEventListener(type, listener, options) 和 addEventListener(type, listener, useCapture)
+    */
+    addEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void;
+
+    /** 事件解绑
+     * @param element 事件元素
+     * @param eType 事件类型
+     * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的 listener
+     * @param optionsOrUseCapture 参考浏览器 removeEventListener API 的 removeEventListener(type, listener, options) 和 removeEventListener(type, listener, useCapture)
+    */
+    removeEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void;
+
+    isSupportFullScreen (): boolean;
+    getFullScreenElement (): HTMLElement | undefined;
+    enterFullScreen (element?: HTMLElement): void;
+    exitFullScreen (): void;
+    addFullScreenChangeListener (listener: QFnEmptyArgs): void;
+    removeFullScreenChangeListener (listener: QFnEmptyArgs): void;
   }
 
-  export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQArray, IQObject, IQDom {
+  export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQArray, IQObject, IQBrowser {
     /** 延迟执行,需要用 async 和 await 组合实现 */
     sleep (ts: number): Promise<void>;
     /** 随机获取范围内 count 个值 */
