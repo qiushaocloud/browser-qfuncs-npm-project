@@ -75,6 +75,12 @@
   }
 
   export interface IQDate {
+    /** 获取当前时间戳，只支持 get */
+    nowTimestamp: number;
+    /** 返回校准后的当前时间戳，只支持 get */
+    nowCalibrationTimestamp: number;
+    /** 时间校准差值，支持 set / get */
+    timeCalibrationDiff: number;
     getCurrDateSec (date?: Date | number | string): number;
     toDateSec (dateMsec: number): number;
     getCurrFormatDay (date?: Date | number | string): string;

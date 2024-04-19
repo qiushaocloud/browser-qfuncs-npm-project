@@ -3,6 +3,16 @@ import QCompare from './compare';
 import {IQDate} from './qfuncs.i';
 
 class QDate extends QCompare implements IQDate {
+  timeCalibrationDiff = 0;
+
+  get nowTimestamp () {
+    return Date.now();
+  }
+
+  get nowCalibrationTimestamp () {
+    return Date.now() - this.timeCalibrationDiff;
+  }
+
   getCurrDateSec (date?: string | number | Date): number {
     return Math.floor((date === undefined ? Date.now() : this._generateDate(date).getTime()) / 1000);
   }

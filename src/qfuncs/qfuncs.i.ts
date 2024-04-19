@@ -31,6 +31,12 @@ export interface IQCompare {
 }
 
 export interface IQDate {
+  /** 获取当前时间戳，只支持 get */
+  nowTimestamp: number;
+  /** 返回校准后的当前时间戳，只支持 get */
+  nowCalibrationTimestamp: number;
+  /** 时间校准差值，支持 set / get */
+  timeCalibrationDiff: number;
   getCurrDateSec (date?: Date | number | string): number;
   toDateSec (dateMsec: number): number;
   getCurrFormatDay (date?: Date | number | string): string;
@@ -84,7 +90,108 @@ export interface IQObject {
   delObjItems (obj: QJson, keys: string[] | string): QJson;
 }
 
+/**
+  browserKernelName:browserMatch.browser , //浏览器使用的版本名字
+  browserKernelVersion:browserMatch.version ,//浏览器使用的版本号
+  appCodeName:navigator.appCodeName , //返回浏览器的代码名。
+  appMinorVersion:navigator.appMinorVersion , //返回浏览器的次级版本。
+  appName:navigator.appName , //返回浏览器的名称。
+  appVersion:navigator.appVersion ,  //	返回浏览器的平台和版本信息。
+  browserLanguage:navigator.browserLanguage , //	返回当前浏览器的语言。
+  cookieEnabled: navigator.cookieEnabled , //	返回指明浏览器中是否启用 cookie 的布尔值。
+  cpuClass:navigator.cpuClass , //	返回浏览器系统的 CPU 等级。
+  onLine:navigator.onLine , //	返回指明系统是否处于脱机模式的布尔值。
+  platform:navigator.platform , //	返回运行浏览器的操作系统平台。
+  systemLanguage:navigator.systemLanguage ,  //返回 OS 使用的默认语言。
+  userAgent:userAgent , //返回由客户机发送服务器的 user-agent 头部的值。
+  userLanguage:navigator.userLanguage , //	返回 OS 的自然语言设置。
+ */
+export interface IBrowserInfo {
+  userAgent: string;
+  language: string;
+  platform: string;
+  appName: string;
+  appVersion: string;
+  browserLanguage: string;
+  cpuClass: string;
+  onLine: boolean;
+  cookieEnabled: boolean;
+  browserKernelName: string;
+  browserKernelVersion: string;
+}
+
 export interface IQBrowser {
+  /** 获取 localStorage 存储的 item */
+  getLocalStorageItem (key: string): string | null;
+
+  /** 设置 localStorage 存储的 item */
+  setLocalStorageItem (key: string, value: string): void;
+
+  /** 删除 localStorage 存储的 item */
+  removeLocalStorageItem (key: string): void;
+
+  /** 清空 localStorage 存储的所有 item */
+  clearLocalStorage (): void;
+
+  /** 获取 sessionStorage 存储的 item */
+  getSessionStorageItem (key: string): string | null;
+
+  /** 设置 sessionStorage 存储的 item */
+  setSessionStorageItem (key: string, value: string): void;
+
+  /** 删除 sessionStorage 存储的 item */
+  removeSessionStorageItem (key: string): void;
+
+  /** 清空 sessionStorage 存储的所有 item */
+  clearSessionStorage (): void;
+
+  /** 获取当前页面的 url 中的所有参数 */
+  getLocationParams (): QJsonT<string>;
+
+  /** 获取当前页面的 url 中的某个参数的值 */
+  getLocationParam (key: string): string | null;
+
+  /** 获取当前页面的 url 中的某个参数的值，并转为 number 类型 */
+  getLocationParamNumber (key: string): number | null;
+
+  /** 获取当前页面的 url 中的某个参数的值，并转为 boolean 类型 */
+  getLocationParamBoolean (key: string): boolean | null;
+
+  /** 获取当前页面的 url 中的某个参数的值，并转为 json 类型 */
+  getLocationParamJson (key: string): QJson | null;
+
+  /** 获取当前页面的 url 中的某个参数的值，并转为数组类型 */
+  getLocationParamArray<T=any> (key: string): T[] | null;
+
+  /** 获取浏览器基本信息 */
+  getBrowserInfo(): IBrowserInfo;
+
+  /** 获取操作系统类型 */
+  getDetectOS(): string;
+
+  /** 获取设备类型 */
+  getDeviceModel (): string;
+
+  /** 获取浏览器引擎名 */
+  getBrowserName(): string;
+
+  /** 获取浏览器版本号 */
+  getBrowserVersion(): string;
+
+  /** 是否是移动端 */
+  isMobile(): boolean;
+
+  /** 是否是微信浏览器 */
+  isWechatBrowser(): boolean;
+
+  /** 获取浏览器内核名 */
+  getBrowserKernelName(): string;
+
+  /** 获取浏览器内核版本 */
+  getBrowserKernelVersion(): string;
+}
+
+export interface IQDom {
   /** 封装阻止事件冒泡函数
    * @param evtCallback 原事件回调函数
    * @returns 返回阻止事件后的函数
