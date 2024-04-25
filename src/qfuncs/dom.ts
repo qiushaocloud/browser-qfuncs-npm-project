@@ -3,11 +3,11 @@ import QArray from './array';
 import {IQDom} from './qfuncs.i';
 
 class QDom extends QArray implements IQDom {
-  stopPropagationWrapper (evtCallback: (event: Event) => void): (event: Event) => void {
+  stopPropagationWrapper (evtCallback: (event: Event) => void, isExecPreventDefault?: boolean): (event: Event) => void {
     return function (event?: Event) {
       if (event && event instanceof Event) {
         // 阻止事件冒泡
-        event.preventDefault && event.preventDefault();
+        isExecPreventDefault && event.preventDefault && event.preventDefault();
         event.stopPropagation && event.stopPropagation();
       }
 
