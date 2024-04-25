@@ -25,7 +25,6 @@ class QDom extends QArray implements IQDom {
   stopImmediatePropagationWrapper (evtCallback: (event: Event) => void): (event: Event) => void {
     return function (event?: Event) {
       if (event && event instanceof Event) {
-        // 阻止事件冒泡
         event.stopImmediatePropagation && event.stopImmediatePropagation();
       }
 
