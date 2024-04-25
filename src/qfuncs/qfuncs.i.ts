@@ -194,9 +194,10 @@ export interface IQBrowser {
 export interface IQDom {
   /** 封装阻止事件冒泡函数
    * @param evtCallback 原事件回调函数
+   * @param isExecPreventDefault 是否执行 preventDefault, 默认为 false
    * @returns 返回阻止事件后的函数
    */
-  stopPropagationWrapper(evtCallback: (event: Event) => void): (event: Event) => void;
+  stopPropagationWrapper(evtCallback: (event: Event) => void, isExecPreventDefault?: boolean): (event: Event) => void;
 
   /** 封装 stopImmediatePropagation(阻止监听同一事件的其他事件监听器被调用) 函数
    * @param evtCallback 原事件回调函数
