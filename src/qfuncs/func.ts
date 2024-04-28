@@ -12,7 +12,7 @@ class QFunc extends QArray implements IQFunc {
         isInvoke = false;
 
       if (immediate && !isInvoke) {
-        timer && clearTimeout(timer);
+        timer && window.clearTimeout(timer);
         timer = null;
         isInvoke = true;  // 已经立即执行, 阻止下次触发的立即执行
         oldImmediateTs = Date.now();
@@ -24,9 +24,9 @@ class QFunc extends QArray implements IQFunc {
       }
 
       oldImmediateTs = 0;
-      timer && clearTimeout(timer);
-      timer = setTimeout(() => {
-        timer && clearTimeout(timer);
+      timer && window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        timer && window.clearTimeout(timer);
         timer = null;
         isInvoke = false; // 将 isInvoke 设置回 false，让其能继续立即执行
         oldImmediateTs = 0;
@@ -39,7 +39,7 @@ class QFunc extends QArray implements IQFunc {
 
     /** 取消功能 */
     _debounce.cancel = function () {
-      timer && clearTimeout(timer);
+      timer && window.clearTimeout(timer);
       timer = null;
       isInvoke = false;
       oldImmediateTs = 0;
