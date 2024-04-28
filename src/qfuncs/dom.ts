@@ -1,8 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import QArray from './array';
+import QTimer from './timer';
 import {IQDom} from './qfuncs.i';
 
-class QDom extends QArray implements IQDom {
+class QDom extends QTimer implements IQDom {
+  private _resizeObservers: QJsonT<{
+    element: HTMLElement,
+    ins?: ResizeObserver,
+    oldWHSize?: {width: number, height: number},
+    listener?: QFnEmptyArgs
+  }> = {};
+
   stopPropagationWrapper (evtCallback: (event: Event) => void, isExecPreventDefault?: boolean): (event: Event) => void {
     return function (event?: Event) {
       if (event && event instanceof Event) {
@@ -218,6 +225,91 @@ class QDom extends QArray implements IQDom {
     this.removeEvent(document, 'mozfullscreenchange', listener); // Firefox
     this.removeEvent(document, 'webkitfullscreenchange', listener); // Chrome, Safari and Opera
     this.removeEvent(document, 'MSFullscreenChange', listener); // Internet Explorer and Edge
+  }
+
+  /** 绑定元素大小变化监听器，返回观察者 id */
+  bindResizeObserver (element: HTMLElement, listener: QFnEmptyArgs): string {
+    if (!element || typeof listener !== 'function') return '';
+
+    const listenerDebounce = this.debounce(listener, 50, true); // 防抖处理，50ms 内只执行一次
+
+    const observerId = Math.floor(100000000000000000 + Math.random() * 900000000000000000) + '_' + Date.now();
+
+    if ('ResizeObserver' in window) { // 浏览器支持 ResizeObserver
+      const resizeObserver = new ResizeObserver(listenerDebounce);
+      resizeObserver.observe(element);
+      this._resizeObservers[observerId] = {element, ins: resizeObserver};
+      return observerId;
+    }
+
+    // 浏览器不支持 ResizeObserver
+    // eslint-disable-next-line no-console
+    console.log('browser not support ResizeObserver, use interval to check element size change, observerId:', observerId);
+
+    if (!this.hasIntervalQueue('QDom:bindResizeObserver:checkSizeChange')) {
+      this.addIntervalQueue('QDom:bindResizeObserver:checkSizeChange', () => {
+        let isRemoveInterval = true;
+
+        for (const observerIdTmp in this._resizeObservers) {
+          const {element: elementTmp, oldWHSize: oldWHSizeTmp, ins: insTmp, listener: listenerTmp} = this._resizeObservers[observerIdTmp];
+          if (!elementTmp || insTmp || !oldWHSizeTmp || !listenerTmp) continue;
+          isRemoveInterval = false;
+          const nowEleWidthTmp = elementTmp.offsetWidth;
+          const nowEleHeightTmp = elementTmp.offsetHeight;
+
+          if (nowEleWidthTmp !== oldWHSizeTmp.width || nowEleHeightTmp !== oldWHSizeTmp.height) {
+            // 大小有改变，触发 listener
+            oldWHSizeTmp.width = nowEleWidthTmp;
+            oldWHSizeTmp.height = nowEleHeightTmp;
+            listenerTmp();
+          }
+        }
+
+        isRemoveInterval && this.removeIntervalQueue('QDom:bindResizeObserver:checkSizeChange');
+      }, 200);
+    }
+
+    const oldWHSize = {width: element.offsetWidth, height: element.offsetHeight};
+    this._resizeObservers[observerId] = {element, oldWHSize: oldWHSize, listener: listenerDebounce};
+
+    return observerId;
+  }
+
+  removeResizeObserver (observerId: string): void {
+    if (!observerId) return;
+
+    const observerInfo = this._resizeObservers[observerId];
+    if (!observerInfo) return;
+
+    if (observerInfo.ins) {
+      observerInfo.ins.disconnect();
+      delete observerInfo.ins;
+    }
+
+    delete observerInfo.listener;
+    delete observerInfo.oldWHSize;
+    delete this._resizeObservers[observerId];
+
+    let isRemoveInterval = true;
+
+    for (const observerIdTmp in this._resizeObservers) {
+      const {element: elementTmp, oldWHSize: oldWHSizeTmp, ins: insTmp, listener: listenerTmp} = this._resizeObservers[observerIdTmp];
+      if (!elementTmp || insTmp || !oldWHSizeTmp || !listenerTmp) continue;
+      isRemoveInterval = false;
+      break;
+    }
+
+    isRemoveInterval && this.removeIntervalQueue('QDom:bindResizeObserver:checkSizeChange');
+  }
+
+  removeResizeObserversByElement (element: HTMLElement): void {
+    if (!element) return;
+    for (const observerIdTmp in this._resizeObservers) {
+      const {element: elementTmp} = this._resizeObservers[observerIdTmp];
+      if (elementTmp === element) {
+        this.removeResizeObserver(observerIdTmp);
+      }
+    }
   }
 }
 

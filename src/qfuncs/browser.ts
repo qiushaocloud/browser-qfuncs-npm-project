@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import QDom from './dom';
-import {IBrowserInfo, IQBrowser} from './qfuncs.i';
+import {IQBrowser} from './qfuncs.i';
 
 class QBrowser extends QDom implements IQBrowser {
   getLocalStorageItem (key: string): string | null {
@@ -86,33 +86,33 @@ class QBrowser extends QDom implements IQBrowser {
     return value.split(',') as T[];
   }
 
-  getBrowserInfo (): IBrowserInfo {
-    throw new Error('Method not implemented.');
-  }
-  getDetectOS (): string {
-    throw new Error('Method not implemented.');
-  }
-  getDeviceModel (): string {
-    throw new Error('Method not implemented.');
-  }
-  getBrowserName (): string {
-    throw new Error('Method not implemented.');
-  }
-  getBrowserVersion (): string {
-    throw new Error('Method not implemented.');
-  }
-  isMobile (): boolean {
-    throw new Error('Method not implemented.');
-  }
-  isWechatBrowser (): boolean {
-    throw new Error('Method not implemented.');
-  }
-  getBrowserKernelName (): string {
-    throw new Error('Method not implemented.');
-  }
-  getBrowserKernelVersion (): string {
-    throw new Error('Method not implemented.');
-  }
+  // getBrowserInfo (): IBrowserInfo {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getDetectOS (): string {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getDeviceModel (): string {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getBrowserName (): string {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getBrowserVersion (): string {
+  //   throw new Error('Method not implemented.');
+  // }
+  // isMobile (): boolean {
+  //   throw new Error('Method not implemented.');
+  // }
+  // isWechatBrowser (): boolean {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getBrowserKernelName (): string {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getBrowserKernelVersion (): string {
+  //   throw new Error('Method not implemented.');
+  // }
 }
 
 export default QBrowser;

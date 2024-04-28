@@ -163,32 +163,32 @@ export interface IQBrowser {
   /** 获取当前页面的 url 中的某个参数的值，并转为数组类型 */
   getLocationParamArray<T=any> (key: string): T[] | null;
 
-  /** 获取浏览器基本信息 */
-  getBrowserInfo(): IBrowserInfo;
+  // /** 获取浏览器基本信息 */
+  // getBrowserInfo(): IBrowserInfo;
 
-  /** 获取操作系统类型 */
-  getDetectOS(): string;
+  // /** 获取操作系统类型 */
+  // getDetectOS(): string;
 
-  /** 获取设备类型 */
-  getDeviceModel (): string;
+  // /** 获取设备类型 */
+  // getDeviceModel (): string;
 
-  /** 获取浏览器引擎名 */
-  getBrowserName(): string;
+  // /** 获取浏览器引擎名 */
+  // getBrowserName(): string;
 
-  /** 获取浏览器版本号 */
-  getBrowserVersion(): string;
+  // /** 获取浏览器版本号 */
+  // getBrowserVersion(): string;
 
-  /** 是否是移动端 */
-  isMobile(): boolean;
+  // /** 是否是移动端 */
+  // isMobile(): boolean;
 
-  /** 是否是微信浏览器 */
-  isWechatBrowser(): boolean;
+  // /** 是否是微信浏览器 */
+  // isWechatBrowser(): boolean;
 
-  /** 获取浏览器内核名 */
-  getBrowserKernelName(): string;
+  // /** 获取浏览器内核名 */
+  // getBrowserKernelName(): string;
 
-  /** 获取浏览器内核版本 */
-  getBrowserKernelVersion(): string;
+  // /** 获取浏览器内核版本 */
+  // getBrowserKernelVersion(): string;
 }
 
 export interface IQDom {
@@ -233,31 +233,78 @@ export interface IQDom {
   addFullScreenChangeListener (listener: QFnEmptyArgs): void;
   /** 移除全屏改变监听器，如果 listener 不传，则移除所有缓存 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 缓存的 listener 】 */
   removeFullScreenChangeListener (listener?: QFnEmptyArgs): void;
+
+  /** 绑定元素大小变化监听器，返回观察者 id
+   * @param element 监听元素
+   * @param listener 监听器函数
+   * @returns 返回观察者 id (observerId)
+   */
+  bindResizeObserver (element: HTMLElement, listener: QFnEmptyArgs): string;
+
+  /** 移除元素大小变化监听器
+   * @param observerId 观察者 id
+   */
+  removeResizeObserver (observerId: string): void;
+
+  /** 移除 element 绑定的所有大小变化监听器
+   * @param element 监听元素
+   */
+  removeResizeObserversByElement (element: HTMLElement): void;
 }
 
-export interface IQMethods extends IQCheckType, IQCompare, IQToType, IQDate, IQArray, IQObject, IQBrowser {
+export interface IQTimer {
   /** 延迟执行,需要用 async 和 await 组合实现 */
   sleep (ts: number): Promise<void>;
+
+  /** 添加到定时队列
+   * @param queueId 定时队列 id
+   * @param callback 定时器回调函数
+   * @param intervalTs 定时器间隔时间，单位：毫秒
+  */
+  addIntervalQueue (queueId: string, callback: QFnEmptyArgs, intervalTs: number): void;
+
+  /** 从定时队列移除
+   * @param queueId 定时队列 id
+  */
+  removeIntervalQueue (queueId: string): void;
+
+  /** 是否有定时队列任务
+   * @param queueId 定时队列 id
+  */
+  hasIntervalQueue (queueId: string): boolean;
+
+  /** 获取所有定时队列 id
+   * @returns 返回所有定时队列 id
+   */
+  getAllIntervalQueueIds (): string[];
+}
+
+export interface IQFunc {
+  /** 防抖函数
+    * @param func 原函数
+    * @param delay 延迟时间
+    * @param immediate 首次触发时是否立即执行
+    * @returns 返回防抖后的函数
+    */
+  debounce(func: QFnAnyArgs, delay: number, immediate?: boolean): QFnAnyArgs;
+
+  /** 节流函数
+   * @param func 原函数
+   * @param delay 延迟时间
+   * @returns 返回节流后的函数
+   */
+  throttle(func: QFnAnyArgs, delay: number): QFnAnyArgs;
+}
+
+export interface IQMethods extends
+IQFunc, IQCheckType, IQCompare, IQToType, IQDate,
+IQArray, IQObject, IQTimer, IQBrowser {
   /** 随机获取范围内 count 个值 */
   randomRangeValues (start: number, end: number, count?: number): number[];
   generateUuid (): string;
   generateRandomNumberId (): number;
   generateRandomId (isUseNumAndDate?: boolean): string;
   formatError (error: string | Error): QJson;
-  /** 防抖函数
-   * @param func 原函数
-   * @param delay 延迟时间
-   * @param immediate 首次触发时是否立即执行
-   * @returns 返回防抖后的函数
-   */
-  debounce(func: QFnAnyArgs, delay: number, immediate?: boolean): QFnAnyArgs;
-
-  /** 节流函数
-    * @param func 原函数
-    * @param delay 延迟时间
-    * @returns 返回节流后的函数
-    */
-  throttle(func: QFnAnyArgs, delay: number): QFnAnyArgs;
 }
 
 declare global {
