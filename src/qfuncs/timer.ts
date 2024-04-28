@@ -44,10 +44,10 @@ class QTimer extends QFunc implements IQTimer {
         _setIntervalTimerObjTmp.queue.add(queueId);
 
       if (!_setIntervalTimerObjTmp.timer) {
-        const timer = setInterval(()=>{
+        const timer = window.setInterval(()=>{
           const _setIntervalTimerObjTmp2 = this._setIntervalTimerObj[intervalTs];
           if (!_setIntervalTimerObjTmp2) {
-            clearInterval(timer);
+            window.clearInterval(timer);
             return;
           }
 
@@ -74,7 +74,7 @@ class QTimer extends QFunc implements IQTimer {
           }
 
           if (!_setIntervalTimerObjTmp.queue.size) {
-            _setIntervalTimerObjTmp.timer && clearInterval(_setIntervalTimerObjTmp.timer);
+            _setIntervalTimerObjTmp.timer && window.clearInterval(_setIntervalTimerObjTmp.timer);
             _setIntervalTimerObjTmp.timer = undefined;
             delete this._setIntervalTimerObj[intervalTs];
           }
