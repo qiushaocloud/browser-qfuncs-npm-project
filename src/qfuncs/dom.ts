@@ -7,7 +7,8 @@ class QDom extends QTimer implements IQDom {
     element: HTMLElement,
     ins?: ResizeObserver,
     oldWHSize?: {width: number, height: number},
-    listener?: QFnEmptyArgs
+    listener?: QFnEmptyArgs,
+    autoRemoveOnElementVanish?: boolean
   }> = {};
 
   stopPropagationWrapper (evtCallback: (event: Event) => void, isExecPreventDefault?: boolean): (event: Event) => void {
@@ -227,18 +228,53 @@ class QDom extends QTimer implements IQDom {
     this.removeEvent(document, 'MSFullscreenChange', listener); // Internet Explorer and Edge
   }
 
+  isElementInDOMStructure (element: HTMLElement): boolean {
+    if (!element || !(element instanceof HTMLElement) || !element.parentNode)
+      return false;
+
+    if (element === document.documentElement)
+      return true;
+
+    return document.documentElement.contains(element);
+  }
+
   /** 绑定元素大小变化监听器，返回观察者 id */
-  bindResizeObserver (element: HTMLElement, listener: QFnEmptyArgs): string {
+  bindResizeObserver (
+    element: HTMLElement,
+    listener: QFnEmptyArgs,
+    options?: {
+      autoRemoveOnElementVanish?: boolean,
+      disableDebouncing?: boolean
+    }
+  ): string {
     if (!element || typeof listener !== 'function') return '';
 
-    const listenerDebounce = this.debounce(listener, 50, true); // 防抖处理，50ms 内只执行一次
-
     const observerId = Math.floor(100000000000000000 + Math.random() * 900000000000000000) + '_' + Date.now();
+    const listenerDebounce = options?.disableDebouncing ? listener : this.debounce(listener, 50, true); // 防抖处理，50ms 内只执行一次
+    const autoRemoveOnElementVanish = options?.autoRemoveOnElementVanish;
+
+    if (autoRemoveOnElementVanish && !this.hasIntervalQueue('QDom:bindResizeObserver:autoRemove')) { // 启动定时器检查元素是否移除
+      this.addIntervalQueue('QDom:bindResizeObserver:autoRemove', () => {
+        let isRemoveInterval = true;
+
+        for (const observerIdTmp in this._resizeObservers) {
+          const {element: elementTmp, autoRemoveOnElementVanish: autoRemoveOnElementVanishTmp} = this._resizeObservers[observerIdTmp];
+          if (!elementTmp || !autoRemoveOnElementVanishTmp) continue;
+          isRemoveInterval = false;
+
+          if (!this.isElementInDOMStructure(elementTmp)) { // 不在 dom 结构上，需要移除观察者
+            this.removeResizeObserver(observerIdTmp);
+          }
+        }
+
+        isRemoveInterval && this.removeIntervalQueue('QDom:bindResizeObserver:autoRemove');
+      }, 5000);
+    }
 
     if ('ResizeObserver' in window) { // 浏览器支持 ResizeObserver
       const resizeObserver = new ResizeObserver(listenerDebounce);
       resizeObserver.observe(element);
-      this._resizeObservers[observerId] = {element, ins: resizeObserver};
+      this._resizeObservers[observerId] = {element, ins: resizeObserver, autoRemoveOnElementVanish};
       return observerId;
     }
 
@@ -246,7 +282,7 @@ class QDom extends QTimer implements IQDom {
     // eslint-disable-next-line no-console
     console.log('browser not support ResizeObserver, use interval to check element size change, observerId:', observerId);
 
-    if (!this.hasIntervalQueue('QDom:bindResizeObserver:checkSizeChange')) {
+    if (!this.hasIntervalQueue('QDom:bindResizeObserver:checkSizeChange')) { // 启动定时器检查元素大小变化
       this.addIntervalQueue('QDom:bindResizeObserver:checkSizeChange', () => {
         let isRemoveInterval = true;
 
@@ -270,7 +306,7 @@ class QDom extends QTimer implements IQDom {
     }
 
     const oldWHSize = {width: element.offsetWidth, height: element.offsetHeight};
-    this._resizeObservers[observerId] = {element, oldWHSize: oldWHSize, listener: listenerDebounce};
+    this._resizeObservers[observerId] = {element, oldWHSize: oldWHSize, listener: listenerDebounce, autoRemoveOnElementVanish};
 
     return observerId;
   }
@@ -300,6 +336,7 @@ class QDom extends QTimer implements IQDom {
     }
 
     isRemoveInterval && this.removeIntervalQueue('QDom:bindResizeObserver:checkSizeChange');
+    isRemoveInterval && this.removeIntervalQueue('QDom:bindResizeObserver:autoRemove');
   }
 
   removeResizeObserversByElement (element: HTMLElement): void {

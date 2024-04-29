@@ -234,12 +234,25 @@ export interface IQDom {
   /** 移除全屏改变监听器，如果 listener 不传，则移除所有缓存 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 缓存的 listener 】 */
   removeFullScreenChangeListener (listener?: QFnEmptyArgs): void;
 
+  /** 判断元素是否在 DOM 结构中 */
+  isElementInDOMStructure (element: HTMLElement): boolean;
+
   /** 绑定元素大小变化监听器，返回观察者 id
    * @param element 监听元素
    * @param listener 监听器函数
+   * @param options [可选] 选项
+   *   - 'autoRemoveOnElementVanish': 是否元素不在界面上就自动移除监听器，默认为 false 【注：不会立即移除，每隔 5s 会检测一下】
+   *   - 'disableDebouncing': 是否禁用 debounce，默认为 false
    * @returns 返回观察者 id (observerId)
    */
-  bindResizeObserver (element: HTMLElement, listener: QFnEmptyArgs): string;
+  bindResizeObserver (
+    element: HTMLElement,
+    listener: QFnEmptyArgs,
+    options?: {
+      autoRemoveOnElementVanish?: boolean,
+      disableDebouncing?: boolean
+    }
+  ): string;
 
   /** 移除元素大小变化监听器
    * @param observerId 观察者 id
