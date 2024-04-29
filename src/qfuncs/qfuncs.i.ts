@@ -298,7 +298,7 @@ export interface IQFunc {
 
 export interface IQMethods extends
 IQFunc, IQCheckType, IQCompare, IQToType, IQDate,
-IQArray, IQObject, IQTimer, IQBrowser {
+IQArray, IQObject, IQTimer, IQBrowser, IQDom {
   /** 随机获取范围内 count 个值 */
   randomRangeValues (start: number, end: number, count?: number): number[];
   generateUuid (): string;
