@@ -244,13 +244,14 @@ class QDom extends QTimer implements IQDom {
     listener: QFnEmptyArgs,
     options?: {
       autoRemoveOnElementVanish?: boolean,
-      disableDebouncing?: boolean
+      disableDebouncing?: boolean,
+      debounceInterval?: number
     }
   ): string {
     if (!element || typeof listener !== 'function') return '';
 
     const observerId = Math.floor(100000000000000000 + Math.random() * 900000000000000000) + '_' + Date.now();
-    const listenerDebounce = options?.disableDebouncing ? listener : this.debounce(listener, 50, true); // 防抖处理，50ms 内只执行一次
+    const listenerDebounce = options?.disableDebouncing ? listener : this.debounce(listener, options?.debounceInterval || 150, true); // 防抖处理，150ms 内只执行一次
     const autoRemoveOnElementVanish = options?.autoRemoveOnElementVanish;
 
     if (autoRemoveOnElementVanish && !this.hasIntervalQueue('QDom:bindResizeObserver:autoRemove')) { // 启动定时器检查元素是否移除

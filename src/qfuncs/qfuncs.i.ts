@@ -243,6 +243,7 @@ export interface IQDom {
    * @param options [可选] 选项
    *   - 'autoRemoveOnElementVanish': 是否元素不在界面上就自动移除监听器，默认为 false 【注：不会立即移除，每隔 5s 会检测一下】
    *   - 'disableDebouncing': 是否禁用 debounce，默认为 false
+   *   - 'debounceInterval': debounce 间隔时间，默认为 100 【注：单位：毫秒】
    * @returns 返回观察者 id (observerId)
    */
   bindResizeObserver (
@@ -250,7 +251,8 @@ export interface IQDom {
     listener: QFnEmptyArgs,
     options?: {
       autoRemoveOnElementVanish?: boolean,
-      disableDebouncing?: boolean
+      disableDebouncing?: boolean,
+      debounceInterval?: number
     }
   ): string;
 
