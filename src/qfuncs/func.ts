@@ -48,7 +48,7 @@ class QFunc extends QArray implements IQFunc {
     return _debounce;
   }
 
-  throttle (func: QFnAnyArgs, delay: number): QFnAnyArgs {
+  throttle (func: QFnAnyArgs, delay: number, trailing?: boolean): QFnAnyArgs {
     let timer: number | null = null;
     let lastCallTs = 0;
 
@@ -63,7 +63,7 @@ class QFunc extends QArray implements IQFunc {
         // @ts-ignore 忽略 this
         // eslint-disable-next-line no-invalid-this
         func.apply(this, args);
-      } else if (!timer) { // 如果没有定时器且 trailing 为 true，则设置定时器
+      } else if (!timer && trailing) { // 如果没有定时器且 trailing 为 true，则设置定时器
         timer = window.setTimeout(() => {
           timer = null; // 重置定时器
           lastCallTs = Date.now();
