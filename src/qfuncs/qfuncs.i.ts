@@ -296,6 +296,7 @@ export interface IQTimer {
 
 export interface IQFunc {
   /** 防抖函数
+    * @description 防抖函数，当一个事件频繁触发时，防抖技术确保在事件触发后的特定时间段内只执行一次相应的操作。如果在此时间段内事件再次触发，则重新计时。
     * @param func 原函数
     * @param delay 延迟时间
     * @param immediate 首次触发时是否立即执行
@@ -304,6 +305,7 @@ export interface IQFunc {
   debounce(func: QFnAnyArgs, delay: number, immediate?: boolean): QFnAnyArgs;
 
   /** 节流函数
+   * @description 节流函数，节流技术确保在一定时间间隔内只执行一次操作，即使事件频繁触发。
    * @param func 原函数
    * @param delay 延迟时间
    * @returns 返回节流后的函数

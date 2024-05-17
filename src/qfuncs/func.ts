@@ -49,18 +49,40 @@ class QFunc extends QArray implements IQFunc {
   }
 
   throttle (func: QFnAnyArgs, delay: number): QFnAnyArgs {
-    let lstCallTs = 0;
+    let timer: number | null = null;
+    let lastCallTs = 0;
 
-    return function (...args: unknown[]) {
+    const _throttle = function (...args: unknown[]) {
       const now = Date.now();
-      if (now - lstCallTs >= delay) {
-        lstCallTs = now;
+      const remaining = delay - (now - lastCallTs); // 计算剩余时间
+      if (remaining <= 0 || remaining > delay) { // 如果剩余时间小于等于 0 或者大于延迟时间，则立即执行函数【remaining > delay 是为了处理一些特殊情况，比如系统时间发生了变化或用户手动更改了系统时间，导致时间计算出现异常。】
+        timer && clearTimeout(timer); // 清除定时器
+        timer = null;
+        lastCallTs = now; // 更新上次调用时间戳
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore 忽略 this
         // eslint-disable-next-line no-invalid-this
         func.apply(this, args);
+      } else if (!timer) { // 如果没有定时器且 trailing 为 true，则设置定时器
+        timer = window.setTimeout(() => {
+          timer = null; // 重置定时器
+          lastCallTs = Date.now();
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore 忽略 this
+          // eslint-disable-next-line no-invalid-this
+          func.apply(this, args);
+        }, remaining);
       }
     };
+
+    /** 取消功能 */
+    _throttle.cancel = function () {
+      timer && window.clearTimeout(timer);
+      timer = null;
+      lastCallTs = 0;
+    };
+
+    return _throttle;
   }
 }
 
