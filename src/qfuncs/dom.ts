@@ -248,7 +248,7 @@ class QDom extends QTimer implements IQDom {
     element: HTMLElement | Window | Document,
     cacheGroupId: string
   ): void {
-    if (!element || !cacheGroupId)
+    if (!element || !cacheGroupId || !(element as any)._qtmpEventListeners)
       return;
 
     for (const eType in (element as any)._qtmpEventListeners) {
