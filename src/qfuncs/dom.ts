@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import QTimer from './timer';
 import {IQDom} from './qfuncs.i';
@@ -89,13 +90,27 @@ class QDom extends QTimer implements IQDom {
    * @param eType 事件类型
    * @param listener 事件处理器
    * @param optionsOrUseCapture 参考浏览器 addEventListener API 的 addEventListener(type, listener, options) 和 addEventListener(type, listener, useCapture)
-   * @param isCacheListener 是否缓存 listener，如果缓存了，则 removeEvent 时没传 listener 则会删除缓存的 listeners
+   * @param cacheGroupId 缓存组标记，一旦设置后，listener 会进行缓存，支持通过 cacheGroupId 移除该组监听的事件【如果缓存了，则 removeEvent 时没传 listener 则会删除缓存的 listeners】
+   * @returns 返回缓存的事件 id (cacheEventId)，如果 cacheGroupId 为空，则返回 undefined【支持通过 cacheEventId 移除该事件】
   */
-  addEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean, isCacheListener?: boolean): void  {
+  addEvent (
+    element: HTMLElement | Window | Document,
+    eType: string,
+    listener: QFnAnyArgs,
+    optionsOrUseCapture?: QJson | boolean,
+    cacheGroupId?: string
+  ): string | void {
     if (!element || !eType || !listener)
       return;
 
-    let isSave = !!isCacheListener;
+    let cacheEventId: string | undefined = undefined;
+    if (cacheGroupId) {
+      cacheEventId = `${cacheGroupId}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+      (listener as any).cacheEventId = cacheEventId;
+      (listener as any).cacheGroupId = cacheGroupId;
+    }
+
+    let isSave = !!cacheGroupId;
     if (element.addEventListener) { // 如果支持addEventListener
       element.addEventListener(eType, listener, optionsOrUseCapture);
     } else if ((element as any).attachEvent) { // 如果支持attachEvent
@@ -120,6 +135,8 @@ class QDom extends QTimer implements IQDom {
 
       !eTypeListenerArr.includes(listener) && eTypeListenerArr.push(listener);
     }
+
+    return cacheEventId;
   }
 
   /** 事件解绑
@@ -128,7 +145,12 @@ class QDom extends QTimer implements IQDom {
    * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的 listener 【注：所有调用 addEvent 进行绑定类型的 listener 】
    * @param optionsOrUseCapture 参考浏览器 removeEventListener API 的 removeEventListener(type, listener, options) 和 removeEventListener(type, listener, useCapture)
    */
-  removeEvent (element: HTMLElement | Window | Document, eType: string, listener?: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void {
+  removeEvent (
+    element: HTMLElement | Window | Document,
+    eType: string,
+    listener?: QFnAnyArgs,
+    optionsOrUseCapture?: QJson | boolean
+  ): void {
     if (!element || !eType)
       return;
 
@@ -161,6 +183,60 @@ class QDom extends QTimer implements IQDom {
       }
     } else {
       (element as any)['on' + eType] = null;
+      (element as any)._qtmpEventListeners && (delete (element as any)._qtmpEventListeners[eType]);
+    }
+  }
+
+  /** 通过 cacheEventId 解绑对应的事件
+   * @param element 事件元素
+   * @param eType 事件类型
+   * @param cacheEventId 缓存的事件 id
+   */
+  removeEventByCacheEventId (
+    element: HTMLElement | Window | Document,
+    eType: string,
+    cacheEventId: string
+  ): void {
+    if (!element || !eType || !cacheEventId)
+      return;
+
+    if ((element as any)['on' + eType] && typeof (element as any)['on' + eType] === 'function' && (element as any)['on' + eType].cacheEventId === cacheEventId)
+      this.removeEvent(element, eType, (element as any)['on' + eType]);
+
+    const eTypeListenerArr = ((element as any)._qtmpEventListeners && (element as any)._qtmpEventListeners[eType]) as QFnAnyArgs[];
+    if (!eTypeListenerArr || !eTypeListenerArr.length) return;
+
+    for (const eTypeListener of eTypeListenerArr) {
+      if ((eTypeListener as any).cacheEventId === cacheEventId) {
+        this.removeEvent(element, eType, eTypeListener);
+        break;
+      }
+    }
+  }
+
+  /** 通过 cacheGroupId 解绑该组的事件
+   * @param element 事件元素
+   * @param eType 事件类型
+   * @param cacheGroupId 缓存组标记
+   */
+  removeEventsByCacheGroupId (
+    element: HTMLElement | Window | Document,
+    eType: string,
+    cacheGroupId: string
+  ): void {
+    if (!element || !eType || !cacheGroupId)
+      return;
+
+    if ((element as any)['on' + eType] && typeof (element as any)['on' + eType] === 'function' && (element as any)['on' + eType].cacheGroupId === cacheGroupId)
+      this.removeEvent(element, eType, (element as any)['on' + eType]);
+
+    const eTypeListenerArr = ((element as any)._qtmpEventListeners && (element as any)._qtmpEventListeners[eType]) as QFnAnyArgs[];
+    if (!eTypeListenerArr || !eTypeListenerArr.length) return;
+
+    for (const eTypeListener of eTypeListenerArr) {
+      if ((eTypeListener as any).cacheGroupId === cacheGroupId) {
+        this.removeEvent(element, eType, eTypeListener);
+      }
     }
   }
 
@@ -214,10 +290,10 @@ class QDom extends QTimer implements IQDom {
   }
 
   addFullScreenChangeListener (listener: QFnEmptyArgs): void {
-    this.addEvent(document, 'fullscreenchange', listener, undefined, true);
-    this.addEvent(document, 'mozfullscreenchange', listener, undefined, true); // Firefox
-    this.addEvent(document, 'webkitfullscreenchange', listener, undefined, true); // Chrome, Safari and Opera
-    this.addEvent(document, 'MSFullscreenChange', listener, undefined, true); // Internet Explorer and Edge
+    this.addEvent(document, 'fullscreenchange', listener, undefined, 'QFuncs:QDom');
+    this.addEvent(document, 'mozfullscreenchange', listener, undefined, 'QFuncs:QDom'); // Firefox
+    this.addEvent(document, 'webkitfullscreenchange', listener, undefined, 'QFuncs:QDom'); // Chrome, Safari and Opera
+    this.addEvent(document, 'MSFullscreenChange', listener, undefined, 'QFuncs:QDom'); // Internet Explorer and Edge
   }
 
   /** 移除全屏改变监听器，如果 listener 不传，则移除所有缓存 listener【注：所有调用 addFullScreenChangeListener 和 addEvent(fullscreenchange、mozfullscreenchange、webkitfullscreenchange、MSFullscreenChange) 缓存的 listener 】 */

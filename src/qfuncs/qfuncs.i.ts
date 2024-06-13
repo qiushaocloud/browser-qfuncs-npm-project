@@ -214,17 +214,51 @@ export interface IQDom {
    * @param eType 事件类型
    * @param listener 事件处理器
    * @param optionsOrUseCapture 参考浏览器 addEventListener API 的 addEventListener(type, listener, options) 和 addEventListener(type, listener, useCapture)
-   * @param isCacheListener 是否缓存 listener，如果缓存了，则 removeEvent 时没传 listener 则会删除缓存的 listeners
+   * @param cacheGroupId 缓存组标记，一旦设置后，listener 会进行缓存，支持通过 cacheGroupId 移除该组监听的事件【如果缓存了，则 removeEvent 时没传 listener 则会删除缓存的 listeners】
+   * @returns 返回缓存的事件 id (cacheEventId)，如果 cacheGroupId 为空，则返回 undefined【支持通过 cacheEventId 移除该事件】
   */
-  addEvent (element: HTMLElement | Window | Document, eType: string, listener: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean, isCacheListener?: boolean): void;
+  addEvent (
+    element: HTMLElement | Window | Document,
+    eType: string,
+    listener: QFnAnyArgs,
+    optionsOrUseCapture?: QJson | boolean,
+    cacheGroupId?: string
+  ): string | void;
 
   /** 事件解绑
    * @param element 事件元素
    * @param eType 事件类型
-   * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有绑定的缓存 listener 【注：所有调用 addEvent 进行绑定类型的缓存 listener 】
+   * @param listener 需要从目标事件移除的事件监听器函数，不传则移除该事件类型中所有缓存的 listener 【注：所有调用 addEvent 进行绑定类型的缓存 listener 】
    * @param optionsOrUseCapture 参考浏览器 removeEventListener API 的 removeEventListener(type, listener, options) 和 removeEventListener(type, listener, useCapture)
    */
-  removeEvent (element: HTMLElement | Window | Document, eType: string, listener?: QFnAnyArgs, optionsOrUseCapture?: QJson | boolean): void;
+  removeEvent (
+    element: HTMLElement | Window | Document,
+    eType: string,
+    listener?: QFnAnyArgs,
+    optionsOrUseCapture?: QJson | boolean
+  ): void;
+
+  /** 通过 cacheEventId 解绑对应的事件
+   * @param element 事件元素
+   * @param eType 事件类型
+   * @param cacheEventId 缓存的事件 id
+   */
+  removeEventByCacheEventId (
+    element: HTMLElement | Window | Document,
+    eType: string,
+    cacheEventId: string
+  ): void;
+
+  /** 通过 cacheGroupId 解绑该组的事件
+   * @param element 事件元素
+   * @param eType 事件类型
+   * @param cacheGroupId 缓存组标记
+   */
+  removeEventsByCacheGroupId (
+    element: HTMLElement | Window | Document,
+    eType: string,
+    cacheGroupId: string
+  ): void;
 
   isSupportFullScreen (): boolean;
   getFullScreenElement (): HTMLElement | undefined;
@@ -299,7 +333,7 @@ export interface IQFunc {
     * @description 防抖函数，当一个事件频繁触发时，防抖技术确保在事件触发后的特定时间段内只执行一次相应的操作。如果在此时间段内事件再次触发，则重新计时。
     * @param func 原函数
     * @param delay 延迟时间
-    * @param immediate 首次触发时是否立即执行
+    * @param [immediate] 首次触发时是否立即执行
     * @returns 返回防抖后的函数
     */
   debounce(func: QFnAnyArgs, delay: number, immediate?: boolean): QFnAnyArgs;
