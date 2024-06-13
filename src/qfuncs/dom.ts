@@ -214,7 +214,7 @@ class QDom extends QTimer implements IQDom {
     }
   }
 
-  /** 通过 cacheGroupId 解绑该组的事件
+  /** 通过 cacheGroupId 解绑指定事件类型中该组的事件
    * @param element 事件元素
    * @param eType 事件类型
    * @param cacheGroupId 缓存组标记
@@ -237,6 +237,22 @@ class QDom extends QTimer implements IQDom {
       if ((eTypeListener as any).cacheGroupId === cacheGroupId) {
         this.removeEvent(element, eType, eTypeListener);
       }
+    }
+  }
+
+  /** 通过 cacheGroupId 解绑该组的事件
+   * @param element 事件元素
+   * @param cacheGroupId 缓存组标记
+   */
+  removeAllEventsByCacheGroupId (
+    element: HTMLElement | Window | Document,
+    cacheGroupId: string
+  ): void {
+    if (!element || !cacheGroupId)
+      return;
+
+    for (const eType in (element as any)._qtmpEventListeners) {
+      this.removeEventsByCacheGroupId(element, eType, cacheGroupId);
     }
   }
 

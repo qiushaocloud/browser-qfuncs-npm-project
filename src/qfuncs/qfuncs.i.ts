@@ -249,7 +249,7 @@ export interface IQDom {
     cacheEventId: string
   ): void;
 
-  /** 通过 cacheGroupId 解绑该组的事件
+  /** 通过 cacheGroupId 解绑指定事件类型中该组的事件
    * @param element 事件元素
    * @param eType 事件类型
    * @param cacheGroupId 缓存组标记
@@ -257,6 +257,15 @@ export interface IQDom {
   removeEventsByCacheGroupId (
     element: HTMLElement | Window | Document,
     eType: string,
+    cacheGroupId: string
+  ): void;
+
+  /** 通过 cacheGroupId 解绑该组的事件
+   * @param element 事件元素
+   * @param cacheGroupId 缓存组标记
+   */
+  removeAllEventsByCacheGroupId (
+    element: HTMLElement | Window | Document,
     cacheGroupId: string
   ): void;
 
